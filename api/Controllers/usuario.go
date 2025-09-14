@@ -3,25 +3,37 @@ package controllers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	models "github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/Models"
 )
 
-// Handler para registrar usuario
-func InsertarUsuarioHandler(db *sql.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var input struct {
-			FirstName string `json:"first_name"`
-			LastName  string `json:"last_name"`
-			Email     string `json:"email"`
-			Password  string `json:"password"`
-			UsmPesos  int    `json:"usm_pesos"`
-		}
+// Función para convertir entrada json a struct
+func BindJSON(c *gin.Context, obj any) bool {
+	if err := c.ShouldBindJSON(obj); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "datos invalidos"})
+		return false
+	}
+	return true
+}
 
-		// Convertir a struct la entrada
-		if err := c.ShouldBind(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "datos invalidos"})
+// Función para obtener id de URL
+func ParseID(c *gin.Context) (int, bool) {
+	id_str := c.Param("id")
+	id, err := strconv.Atoi(id_str)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id inválido"})
+		return 0, false
+	}
+	return id, true
+}
+
+// Handler para registrar usuario
+func InsertUserHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var input models.UserInput
+		if !BindJSON(c, &input) {
 			return
 		}
 
@@ -34,10 +46,95 @@ func InsertarUsuarioHandler(db *sql.DB) gin.HandlerFunc {
 		}
 
 		// Llamar modelo
-		if err := models.InsertarUsuario(db, user); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		if err := models.InsertUser(db, user); err != nil {
+			if err.Error() == "el correo ya esta registrado" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			}
 			return
 		}
 		c.JSON(http.StatusCreated, gin.H{"message": "usuario registrado con exito"})
+	}
+}
+
+// Handler para validar inicio de sesión
+func LoginHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var input models.UserLogin
+		if !BindJSON(c, &input) {
+			return
+		}
+
+		users, err := models.ListUsers(db)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		for _, u := range users {
+			if u.Email == input.Email && u.Password == input.Password {
+				c.JSON(http.StatusOK, gin.H{"message": "login exitoso"})
+				return
+			}
+		}
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "email o contraseña incorrectos"})
+	}
+}
+
+// Handler para actualizar saldo de usm pesos
+func BalanceHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, ok := ParseID(c)
+		if !ok {
+			return
+		}
+
+		var input models.UserUpdate
+		if !BindJSON(c, &input) {
+			return
+		}
+
+		if err := models.UpdateUser(db, id, input); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"message": "saldo actualizado correctamente"})
+	}
+}
+
+// Handler para listar usuarios
+func ListUsers(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		users, err := models.ListUsers(db)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, users)
+	}
+}
+
+// Handler para obtener usuario
+func GetUser(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, ok := ParseID(c)
+		if !ok {
+			return
+		}
+
+		user, err := models.GetUserById(db, id)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"id":         user.Id,
+			"first_name": user.FirstName,
+			"last_name":  user.LastName,
+			"email":      user.Email,
+			"usm_pesos":  user.UsmPesos,
+		})
 	}
 }
