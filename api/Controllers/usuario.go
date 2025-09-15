@@ -3,50 +3,22 @@ package controllers
 import (
 	"database/sql"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
-	models "github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/Models"
+	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models"
+	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/utils"
 )
-
-// Función para convertir entrada json a struct
-func BindJSON(c *gin.Context, obj any) bool {
-	if err := c.ShouldBindJSON(obj); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "datos invalidos"})
-		return false
-	}
-	return true
-}
-
-// Función para obtener id de URL
-func ParseID(c *gin.Context) (int, bool) {
-	id_str := c.Param("id")
-	id, err := strconv.Atoi(id_str)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id inválido"})
-		return 0, false
-	}
-	return id, true
-}
 
 // Handler para registrar usuario
 func InsertUserHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var input models.UserInput
-		if !BindJSON(c, &input) {
+		if !utils.BindJSON(c, &input) {
 			return
 		}
 
-		user := models.User{
-			FirstName: input.FirstName,
-			LastName:  input.LastName,
-			Email:     input.Email,
-			Password:  input.Password,
-			UsmPesos:  input.UsmPesos,
-		}
-
 		// Llamar modelo
-		if err := models.InsertUser(db, user); err != nil {
+		if err := models.InsertUser(db, input); err != nil {
 			if err.Error() == "el correo ya esta registrado" {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			} else {
@@ -62,7 +34,7 @@ func InsertUserHandler(db *sql.DB) gin.HandlerFunc {
 func LoginHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var input models.UserLogin
-		if !BindJSON(c, &input) {
+		if !utils.BindJSON(c, &input) {
 			return
 		}
 
@@ -85,13 +57,13 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 // Handler para actualizar saldo de usm pesos
 func BalanceHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, ok := ParseID(c)
+		id, ok := utils.ParseID(c)
 		if !ok {
 			return
 		}
 
 		var input models.UserUpdate
-		if !BindJSON(c, &input) {
+		if !utils.BindJSON(c, &input) {
 			return
 		}
 
@@ -104,7 +76,7 @@ func BalanceHandler(db *sql.DB) gin.HandlerFunc {
 }
 
 // Handler para listar usuarios
-func ListUsers(db *sql.DB) gin.HandlerFunc {
+func ListUsersHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users, err := models.ListUsers(db)
 		if err != nil {
@@ -116,9 +88,9 @@ func ListUsers(db *sql.DB) gin.HandlerFunc {
 }
 
 // Handler para obtener usuario
-func GetUser(db *sql.DB) gin.HandlerFunc {
+func GetUserHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, ok := ParseID(c)
+		id, ok := utils.ParseID(c)
 		if !ok {
 			return
 		}

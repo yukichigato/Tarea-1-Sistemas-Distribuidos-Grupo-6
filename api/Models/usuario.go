@@ -7,7 +7,7 @@ import (
 
 // Listar usuarios
 func ListUsers(db *sql.DB) ([]User, error) {
-	rows, err := db.Query("SELECT id, first_name, last_name, email, password, usm_pesos FROM usuarios")
+	rows, err := db.Query("SELECT id, first_name, last_name, email, usm_pesos FROM usuarios")
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,6 @@ func ListUsers(db *sql.DB) ([]User, error) {
 			&user.FirstName,
 			&user.LastName,
 			&user.Email,
-			&user.Password,
 			&user.UsmPesos,
 		); err != nil {
 			return nil, err
@@ -41,12 +40,11 @@ func ListUsers(db *sql.DB) ([]User, error) {
 // Obtener usuario específico
 func GetUserById(db *sql.DB, id int) (User, error) {
 	var user User
-	err := db.QueryRow("SELECT * FROM usuarios WHERE id=$1", id).Scan(
+	err := db.QueryRow("SELECT id, first_name, last_name, email, usm_pesos FROM usuarios WHERE id=$1", id).Scan(
 		&user.Id,
 		&user.FirstName,
 		&user.LastName,
 		&user.Email,
-		&user.Password,
 		&user.UsmPesos,
 	)
 
@@ -58,7 +56,7 @@ func GetUserById(db *sql.DB, id int) (User, error) {
 }
 
 // Insertar usuario en la tabla Usuario
-func InsertUser(db *sql.DB, user User) error {
+func InsertUser(db *sql.DB, user UserInput) error {
 	// Verificar que el usuario no exista
 	var exists int
 	err := db.QueryRow("SELECT COUNT(*) FROM usuarios WHERE email=$1", user.Email).Scan(&exists)
@@ -80,7 +78,7 @@ func InsertUser(db *sql.DB, user User) error {
 // Actualizar (saldo) usuario
 func UpdateUser(db *sql.DB, id int, userUpd UserUpdate) error {
 	_, err := db.Exec(
-		"UPDATE usuarios SET usm_pesos=$1 WHERE id=$2", id, userUpd.UsmPesos,
+		"UPDATE usuarios SET usm_pesos=$1 WHERE id=$2", userUpd.UsmPesos, id,
 	)
 	return err
 }

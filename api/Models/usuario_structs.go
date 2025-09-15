@@ -1,12 +1,12 @@
 package models
 
 type User struct {
-	Id        int
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
-	UsmPesos  int
+	Id        int    `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	UsmPesos  int    `json:"usm_pesos"`
 }
 
 type UserInput struct {
