@@ -11,8 +11,8 @@ func SetupRoutes(router *gin.Engine, db *sql.DB) {
 	// Endpoints solicitados en la tarea
 	router.GET("/users", controllers.ListUsersHandler(db))     // Listar todos los usuarios
 	router.GET("/users/:id", controllers.GetUserHandler(db))   // Obtener usuario por id
-	router.POST("/users", controllers.InsertUserHandler(db))   // Registrar nuevo usuario
 	router.PATCH("/users/:id", controllers.BalanceHandler(db)) // Actualiza saldo de usm pesos del usuario
+	router.POST("/users", controllers.InsertUserHandler(db))   // Registrar nuevo usuario
 
 	router.GET("/books", controllers.ListBooksHandler(db))        // Listar todos los libros
 	router.GET("/books/:id", controllers.GetBookHandler(db))      // Obtener libro por id
@@ -27,6 +27,7 @@ func SetupRoutes(router *gin.Engine, db *sql.DB) {
 	router.GET("/sales", controllers.ListSalesHandler(db))        // Listar todas las ventas
 	router.GET("/sales/:id", controllers.GetSaleHandler(db))      // Obtener venta por id
 	router.PATCH("/sales/:id", controllers.UpdateSaleHandler(db)) // Actualizar venta
+	router.POST("/sales", controllers.InsertSaleHandler(db))      // Registrar nueva venta
 
 	// Endpoints adicionales, no solicitados en la tarea
 	router.POST("/login", controllers.LoginHandler(db)) // Validar inicio de sesión

@@ -59,3 +59,19 @@ func UpdateSaleHandler(db *sql.DB) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"message": "venta actualizada correctamente"})
 	}
 }
+
+// Handler para registrar venta
+func InsertSaleHandler(db *sql.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var input structs.SaleInput
+		if !utils.BindJSON(c, &input) {
+			return
+		}
+
+		if err := models.InsertSale(db, input); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"message": "venta registrada con exito"})
+	}
+}

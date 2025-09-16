@@ -70,3 +70,12 @@ func UpdateSale(db *sql.DB, id int, saleUpd structs.SaleUpdate) error {
 
 	return nil
 }
+
+// Registrar venta
+func InsertSale(db *sql.DB, sale structs.SaleInput) error {
+	_, err := db.Exec(
+		"INSERT INTO ventas (user_id, book_id, sale_date) VALUES ($1, $2, NOW())",
+		sale.UserId, sale.BookId,
+	)
+	return err
+}
