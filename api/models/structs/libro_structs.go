@@ -1,4 +1,8 @@
-package models
+package structs
+
+import (
+	"time"
+)
 
 type Inventory struct {
 	AvailableQuantity int `json:"available_quantity"`
@@ -12,6 +16,7 @@ type Book struct {
 	Price           float64   `json:"price"`
 	Status          string    `json:"status"`
 	PopularityScore int       `json:"popularity_score"`
+	PublicationDate time.Time `json:"publication_date"`
 	Inventory       Inventory `json:"inventory"`
 }
 

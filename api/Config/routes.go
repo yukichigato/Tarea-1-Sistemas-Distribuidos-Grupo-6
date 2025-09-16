@@ -19,6 +19,15 @@ func SetupRoutes(router *gin.Engine, db *sql.DB) {
 	router.PATCH("/books/:id", controllers.UpdateBookHandler(db)) // Actualizar popularidad y existencias al adquirir un libro
 	router.POST("/books", controllers.InsertBookHandler(db))      // Registrar nuevo libro
 
+	router.GET("/loans", controllers.ListLoansHandler(db))        // Listar todos los préstamos
+	router.GET("/loans/:id", controllers.GetLoanHandler(db))      // Obtener préstamo por id
+	router.PATCH("/loans/:id", controllers.UpdateLoanHandler(db)) // Actualizar estado de préstamo
+	router.POST("/loans", controllers.InsertLoanHandler(db))      // Registrar préstamo
+
+	router.GET("/sales", controllers.ListSalesHandler(db))        // Listar todas las ventas
+	router.GET("/sales/:id", controllers.GetSaleHandler(db))      // Obtener venta por id
+	router.PATCH("/sales/:id", controllers.UpdateSaleHandler(db)) // Actualizar venta
+
 	// Endpoints adicionales, no solicitados en la tarea
 	router.POST("/login", controllers.LoginHandler(db)) // Validar inicio de sesión
 }

@@ -6,13 +6,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models"
+	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/utils"
 )
 
 // Handler para registrar usuario
 func InsertUserHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var input models.UserInput
+		var input structs.UserInput
 		if !utils.BindJSON(c, &input) {
 			return
 		}
@@ -33,7 +34,7 @@ func InsertUserHandler(db *sql.DB) gin.HandlerFunc {
 // Handler para validar inicio de sesión
 func LoginHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var input models.UserLogin
+		var input structs.UserLogin
 		if !utils.BindJSON(c, &input) {
 			return
 		}
@@ -62,16 +63,16 @@ func BalanceHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		var input models.UserUpdate
+		var input structs.UserBalanceUpdate
 		if !utils.BindJSON(c, &input) {
 			return
 		}
 
-		if err := models.UpdateUser(db, id, input); err != nil {
+		if err := models.UpdateUserBalance(db, id, input); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusCreated, gin.H{"message": "saldo actualizado correctamente"})
+		c.JSON(http.StatusOK, gin.H{"message": "saldo actualizado correctamente"})
 	}
 }
 
@@ -101,12 +102,6 @@ func GetUserHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"id":         user.Id,
-			"first_name": user.FirstName,
-			"last_name":  user.LastName,
-			"email":      user.Email,
-			"usm_pesos":  user.UsmPesos,
-		})
+		c.JSON(http.StatusOK, user)
 	}
 }

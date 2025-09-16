@@ -6,10 +6,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models"
+	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/utils"
 )
 
-// Handler para listar todos los libros
+// Handler para listar todos los libros disponibles
 func ListBooksHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		books, err := models.ListBooks(db)
@@ -35,15 +36,7 @@ func GetBookHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"id":               book.Id,
-			"book_name":        book.BookName,
-			"book_category":    book.BookCategory,
-			"transaction_type": book.TransactionType,
-			"price":            book.Price,
-			"status":           book.Status,
-			"popularity_score": book.PopularityScore,
-		})
+		c.JSON(http.StatusOK, book)
 	}
 }
 
@@ -82,7 +75,7 @@ func UpdateBookHandler(db *sql.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "no se pudo actualizar el libro"})
 			return
 		}
-		c.JSON(http.StatusCreated, gin.H{"message": "libro actualizado correctamente"})
+		c.JSON(http.StatusOK, gin.H{"message": "libro actualizado correctamente"})
 
 	}
 }
@@ -90,7 +83,7 @@ func UpdateBookHandler(db *sql.DB) gin.HandlerFunc {
 // handler para registrar libro
 func InsertBookHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var input models.BookInput
+		var input structs.BookInput
 		if !utils.BindJSON(c, &input) {
 			return
 		}

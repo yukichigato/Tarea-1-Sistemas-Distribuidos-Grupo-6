@@ -1,4 +1,4 @@
-package models
+package structs
 
 type User struct {
 	Id        int    `json:"id"`
@@ -14,7 +14,6 @@ type UserInput struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	UsmPesos  int    `json:"usm_pesos"`
 }
 
 type UserLogin struct {
@@ -22,6 +21,7 @@ type UserLogin struct {
 	Password string `json:"password"`
 }
 
-type UserUpdate struct {
-	UsmPesos int `json:"usm_pesos"`
+type UserBalanceUpdate struct {
+	Books   []int `json:"books"`   // Para libros adquiridos
+	Penalty int   `json:"penalty"` // Para devoluciones tardías
 }

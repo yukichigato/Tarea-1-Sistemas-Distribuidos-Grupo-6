@@ -3,12 +3,14 @@ package models
 import (
 	"database/sql"
 	"errors"
+
+	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 )
 
 // Listar libros disponibles
-func ListBooks(db *sql.DB) ([]Book, error) {
+func ListBooks(db *sql.DB) ([]structs.Book, error) {
 	query := `
-		SELECT l.id, l.book_name, l.book_category, l.tansaction_type, l.price, l.status, l.popularity_score, i.available_quantity
+		SELECT l.id, l.book_name, l.book_category, l.tansaction_type, l.price, l.status, l.popularity_score, l.created_at, i.available_quantity
 		FROM libros l
 		JOIN inventario i ON l.id = i.id
 		WHERE i.available_quantity > 0
@@ -19,9 +21,9 @@ func ListBooks(db *sql.DB) ([]Book, error) {
 	}
 	defer rows.Close()
 
-	var books []Book
+	var books []structs.Book
 	for rows.Next() {
-		var book Book
+		var book structs.Book
 		if err := rows.Scan(
 			&book.Id,
 			&book.BookName,
@@ -30,6 +32,7 @@ func ListBooks(db *sql.DB) ([]Book, error) {
 			&book.Price,
 			&book.Status,
 			&book.PopularityScore,
+			&book.PublicationDate,
 			&book.Inventory.AvailableQuantity,
 		); err != nil {
 			return nil, err
@@ -46,10 +49,16 @@ func ListBooks(db *sql.DB) ([]Book, error) {
 	return books, nil
 }
 
-// Obtener libro específico
-func GetBookById(db *sql.DB, id int) (Book, error) {
-	var book Book
-	err := db.QueryRow("SELECT * FROM libros WHERE id=$1", id).Scan(
+// Obtener libro específico por id
+func GetBookById(db *sql.DB, id int) (structs.Book, error) {
+	query := `
+		SELECT l.id, l.book_name, l.book_category, l.tansaction_type, l.price, l.status, l.popularity_score, l.created_at, i.available_quantity
+		FROM libros l
+		JOIN inventario i ON l.id = i.id
+		WHERE l.id=$1 AND i.available_quantity > 0
+	`
+	var book structs.Book
+	err := db.QueryRow(query, id).Scan(
 		&book.Id,
 		&book.BookName,
 		&book.BookCategory,
@@ -57,6 +66,8 @@ func GetBookById(db *sql.DB, id int) (Book, error) {
 		&book.Price,
 		&book.Status,
 		&book.PopularityScore,
+		&book.PublicationDate,
+		&book.Inventory.AvailableQuantity,
 	)
 
 	if err == sql.ErrNoRows {
@@ -84,13 +95,13 @@ func UpdateBook(db *sql.DB, id int, popularity_score int, available_quantity int
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback()
 
 	// Actualizar inventario
 	_, err = tx.Exec(
 		"UPDATE inventario SET available_quantity=$1 WHERE id=$2", available_quantity, id,
 	)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -99,7 +110,6 @@ func UpdateBook(db *sql.DB, id int, popularity_score int, available_quantity int
 		"UPDATE libros SET popularity_score=$1 WHERE id=$2", popularity_score, id,
 	)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -109,7 +119,6 @@ func UpdateBook(db *sql.DB, id int, popularity_score int, available_quantity int
 			"UPDATE libros SET status=$1 WHERE id=$2", "agotado", id,
 		)
 		if err != nil {
-			tx.Rollback()
 			return err
 		}
 	}
@@ -118,7 +127,7 @@ func UpdateBook(db *sql.DB, id int, popularity_score int, available_quantity int
 }
 
 // Registrar libro
-func InsertBook(db *sql.DB, book BookInput) error {
+func InsertBook(db *sql.DB, book structs.BookInput) error {
 	// Verificar que el libro no exista
 	var exists int
 	err := db.QueryRow("SELECT COUNT(*) FROM libros WHERE book_name=$1", book.BookName).Scan(&exists)
