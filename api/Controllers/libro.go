@@ -18,7 +18,7 @@ func ListBooksHandler(db *sql.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, books)
+		c.JSON(http.StatusOK, gin.H{"books": books})
 	}
 }
 
@@ -48,34 +48,16 @@ func UpdateBookHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		// Verificar existencias del libro
-		available_quantity, err := models.GetInventory(db, id)
-		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		var input structs.BookUpdate
+		if !utils.BindJSON(c, &input) {
 			return
 		}
 
-		if available_quantity == 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "inventario insuficiente del libro solicitado"})
-			return
-		}
-
-		// Obtener popularidad del libro
-		book, err := models.GetBookById(db, id)
-		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
-		}
-
-		newQuantity := available_quantity - 1
-		newPopularity := book.PopularityScore + 1
-
-		// Actualizar popularidad e inventario del libro
-		if err := models.UpdateBook(db, id, newPopularity, newQuantity); err != nil {
+		if err := models.UpdateBook(db, id, input); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "no se pudo actualizar el libro"})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "libro actualizado correctamente"})
+		c.JSON(http.StatusOK, gin.H{"message": "libro actualizado con exito"})
 
 	}
 }

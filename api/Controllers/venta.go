@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models"
@@ -13,12 +14,28 @@ import (
 // Handler para listar ventas
 func ListSalesHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sales, err := models.ListSales((db))
+		idStr := c.Query("id")
+
+		var sales []structs.Sale
+		var err error
+
+		if idStr != "" {
+			userId, convErr := strconv.Atoi(idStr)
+			if convErr != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "id de usuario inválido"})
+				return
+			}
+			sales, err = models.GetUserSales(db, userId)
+		} else {
+			sales, err = models.ListSales(db)
+		}
+
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, sales)
+
+		c.JSON(http.StatusOK, gin.H{"sales": sales})
 	}
 }
 
@@ -56,7 +73,7 @@ func UpdateSaleHandler(db *sql.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "venta actualizada correctamente"})
+		c.JSON(http.StatusOK, gin.H{"message": "venta actualizada con exito"})
 	}
 }
 

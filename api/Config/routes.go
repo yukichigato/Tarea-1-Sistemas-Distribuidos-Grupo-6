@@ -16,7 +16,7 @@ func SetupRoutes(router *gin.Engine, db *sql.DB) {
 
 	router.GET("/books", controllers.ListBooksHandler(db))        // Listar todos los libros
 	router.GET("/books/:id", controllers.GetBookHandler(db))      // Obtener libro por id
-	router.PATCH("/books/:id", controllers.UpdateBookHandler(db)) // Actualizar popularidad y existencias al adquirir un libro
+	router.PATCH("/books/:id", controllers.UpdateBookHandler(db)) // Actualizar popularidad al adquirir un libro
 	router.POST("/books", controllers.InsertBookHandler(db))      // Registrar nuevo libro
 
 	router.GET("/loans", controllers.ListLoansHandler(db))        // Listar todos los préstamos
@@ -29,6 +29,11 @@ func SetupRoutes(router *gin.Engine, db *sql.DB) {
 	router.PATCH("/sales/:id", controllers.UpdateSaleHandler(db)) // Actualizar venta
 	router.POST("/sales", controllers.InsertSaleHandler(db))      // Registrar nueva venta
 
+	router.GET("/transactions", controllers.ListTransactionsHandler(db)) // Listar todas las transacciones
+
 	// Endpoints adicionales, no solicitados en la tarea
 	router.POST("/login", controllers.LoginHandler(db)) // Validar inicio de sesión
+
+	router.GET("/inventory/:id", controllers.GetInventoryHandler(db))      // Obtener inventario de un libro por id
+	router.PATCH("/inventory/:id", controllers.UpdateInventoryHandler(db)) // Actualizar inventario de un libro
 }

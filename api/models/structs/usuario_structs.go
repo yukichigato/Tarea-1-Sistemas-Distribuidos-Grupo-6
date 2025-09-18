@@ -22,6 +22,7 @@ type UserLogin struct {
 }
 
 type UserBalanceUpdate struct {
-	Books   []int `json:"books"`   // Para libros adquiridos
-	Penalty int   `json:"penalty"` // Para devoluciones tardías
+	BookList []int `json:"books_id_list"` // Para libros adquiridos
+	Deposit  *int  `json:"deposit"`       // Para abonar usm pesos
+	LateFee  *int  `json:"late_fee"`      // Para devoluciones tardías
 }

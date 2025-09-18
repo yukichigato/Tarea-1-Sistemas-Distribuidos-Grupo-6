@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models"
@@ -13,12 +14,28 @@ import (
 // Hanlder para listar préstamos
 func ListLoansHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		loans, err := models.ListLoans(db)
+		idStr := c.Query("id")
+
+		var loans []structs.Loan
+		var err error
+
+		if idStr != "" {
+			userId, convErr := strconv.Atoi(idStr)
+			if convErr != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "id de usuario inválido"})
+				return
+			}
+			loans, err = models.GetUserLoans(db, userId)
+		} else {
+			loans, err = models.ListLoans(db)
+		}
+
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, loans)
+
+		c.JSON(http.StatusOK, gin.H{"loans": loans})
 	}
 }
 
@@ -48,16 +65,11 @@ func UpdateLoanHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		var input structs.LoanStatusUpdate
-		if !utils.BindJSON(c, &input) {
-			return
-		}
-
-		if err := models.UpdateLoanStatus(db, id, input); err != nil {
+		if err := models.UpdateLoanStatus(db, id); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "estado del prestamo actualizado correctamente"})
+		c.JSON(http.StatusOK, gin.H{"message": "estado del prestamo actualizado con exito"})
 	}
 }
 
@@ -73,6 +85,6 @@ func InsertLoanHandler(db *sql.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusCreated, gin.H{"message": "préstamo registrado correctamente"})
+		c.JSON(http.StatusCreated, gin.H{"message": "prestamo registrado con exito"})
 	}
 }

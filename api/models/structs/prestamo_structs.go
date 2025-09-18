@@ -13,10 +13,6 @@ type Loan struct {
 	Status     string    `json:"status"`
 }
 
-type LoanStatusUpdate struct {
-	Status string `json:"status"`
-}
-
 type LoanInput struct {
 	UserId int `json:"user_id"`
 	BookId int `json:"book_id"`

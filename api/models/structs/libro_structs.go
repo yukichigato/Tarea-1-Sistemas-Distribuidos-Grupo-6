@@ -1,31 +1,23 @@
 package structs
 
-import (
-	"time"
-)
-
-type Inventory struct {
-	AvailableQuantity int `json:"available_quantity"`
-}
-
 type Book struct {
-	Id              int       `json:"id"`
-	BookName        string    `json:"book_name"`
-	BookCategory    string    `json:"book_category"`
-	TransactionType string    `json:"transaction_type"`
-	Price           float64   `json:"price"`
-	Status          string    `json:"status"`
-	PopularityScore int       `json:"popularity_score"`
-	PublicationDate time.Time `json:"publication_date"`
-	Inventory       Inventory `json:"inventory"`
+	Id              int    `json:"id"`
+	BookName        string `json:"book_name"`
+	BookCategory    string `json:"book_category"`
+	TransactionType string `json:"transaction_type"`
+	Price           int    `json:"price"`
+	Status          string `json:"status"`
+	PopularityScore int    `json:"popularity_score"`
 }
 
 type BookInput struct {
-	BookName        string    `json:"book_name"`
-	BookCategory    string    `json:"book_category"`
-	TransactionType string    `json:"transaction_type"`
-	Price           float64   `json:"price"`
-	Status          string    `json:"status"`
-	PopularityScore int       `json:"popularity_score"`
-	Inventory       Inventory `json:"inventory"`
+	BookName        string `json:"book_name"`
+	BookCategory    string `json:"book_category"`
+	TransactionType string `json:"transaction_type"`
+	Price           int    `json:"price"`
+	Status          string `json:"status"`
+}
+
+type BookUpdate struct {
+	Quantity int `json:"quantity"`
 }

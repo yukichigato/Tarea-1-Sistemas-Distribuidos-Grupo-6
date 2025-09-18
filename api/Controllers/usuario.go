@@ -68,11 +68,34 @@ func BalanceHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		if err := models.UpdateUserBalance(db, id, input); err != nil {
+		delta := 0
+		// Calcular total de la compra/prestamo (si aplica)
+		if len(input.BookList) > 0 {
+			for _, bookId := range input.BookList {
+				book, err := models.GetBookById(db, bookId)
+				if err != nil {
+					c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+					return
+				}
+				delta += book.Price
+			}
+		}
+
+		// Abono
+		if input.Deposit != nil {
+			delta -= *input.Deposit
+		}
+
+		// Penalización
+		if input.LateFee != nil && *input.LateFee == 1 {
+			delta += 5
+		}
+
+		if err := models.UpdateUserBalance(db, id, delta); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "saldo actualizado correctamente"})
+		c.JSON(http.StatusOK, gin.H{"message": "saldo actualizado con exito"})
 	}
 }
 
@@ -84,7 +107,7 @@ func ListUsersHandler(db *sql.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, users)
+		c.JSON(http.StatusOK, gin.H{"users": users})
 	}
 }
 
