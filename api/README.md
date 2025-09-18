@@ -189,6 +189,9 @@ _Cantidad de veces que se adquiere el libro_
 **Body request:**  
 _No requiere body_
 
+**Query params opcionales:**    
+* _id → Filtra préstamos por user_id. Si se omite, devuelve todos los préstamos_
+
 **Response:**
 ```json
 {
@@ -270,6 +273,9 @@ _No requiere body_
 
 **Body request:**  
 _No requiere body_
+
+**Query params opcionales:**    
+* _id → Filtra ventas por user_id. Si se omite, devuelve todas las ventas
 
 **Response:**
 ```json
