@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 )
@@ -79,9 +81,19 @@ func InsertUser(db *sql.DB, user structs.UserInput) error {
 	return err
 }
 
-// Actualizar saldo usuario
-func UpdateUserBalance(db *sql.DB, id int, delta int) error {
-	_, err := db.Exec(
-		"UPDATE usuarios SET usm_pesos = usm_pesos - ? WHERE id=?", delta, id)
+// Actualizar usuario
+func UpdateUser(db *sql.DB, id int, userUpdates map[string]any) error {
+	sets := []string{}
+	args := []any{}
+
+	for field, value := range userUpdates {
+		sets = append(sets, fmt.Sprintf("%s=?", field))
+		args = append(args, value)
+	}
+	args = append(args, id)
+
+	query := fmt.Sprintf("UPDATE usuarios SET %s WHERE id=?", strings.Join(sets, ", "))
+	_, err := db.Exec(query, args...)
+
 	return err
 }

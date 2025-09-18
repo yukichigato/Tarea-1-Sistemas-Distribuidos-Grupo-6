@@ -9,10 +9,10 @@ import (
 
 func SetupRoutes(router *gin.Engine, db *sql.DB) {
 	// Endpoints solicitados en la tarea
-	router.GET("/users", controllers.ListUsersHandler(db))     // Listar todos los usuarios
-	router.GET("/users/:id", controllers.GetUserHandler(db))   // Obtener usuario por id
-	router.PATCH("/users/:id", controllers.BalanceHandler(db)) // Actualiza saldo de usm pesos del usuario
-	router.POST("/users", controllers.InsertUserHandler(db))   // Registrar nuevo usuario
+	router.GET("/users", controllers.ListUsersHandler(db))        // Listar todos los usuarios
+	router.GET("/users/:id", controllers.GetUserHandler(db))      // Obtener usuario por id
+	router.PATCH("/users/:id", controllers.UpdateUserHandler(db)) // Actualiza saldo de usm pesos del usuario
+	router.POST("/users", controllers.InsertUserHandler(db))      // Registrar nuevo usuario
 
 	router.GET("/books", controllers.ListBooksHandler(db))        // Listar todos los libros
 	router.GET("/books/:id", controllers.GetBookHandler(db))      // Obtener libro por id

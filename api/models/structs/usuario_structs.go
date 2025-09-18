@@ -20,9 +20,3 @@ type UserLogin struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
-
-type UserBalanceUpdate struct {
-	BookList []int `json:"books_id_list"` // Para libros adquiridos
-	Deposit  *int  `json:"deposit"`       // Para abonar usm pesos
-	LateFee  *int  `json:"late_fee"`      // Para devoluciones tardías
-}

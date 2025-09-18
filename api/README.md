@@ -55,16 +55,17 @@ _No requiere body_
 _Campos opcionales, enviar solo lo que se desea actualizar_
 ```json
 {
-    "books_id_list": [1, 4, 2, ...],
-    "deposit": 100,
-    "late_fee": 1 // 1: aplicar penalización, 0: no aplicar
+    "first_name": "Darth",
+    "last_name": "Vader",
+    "email": "vader@email.com",
+    "usm_pesos": 10000
 }
 ```
 
 **Response:**
 ```json
 {
-    "message": "saldo actualizado con exito"
+    "message": "usuario actualizado con exito"
 }
 ```
 
@@ -146,12 +147,16 @@ _No requiere body_
 **Método:** PATCH
 
 **Body request:**   
-_Cantidad de veces que se adquiere el libro_
+_Campos opcionales, enviar solo lo que se desea actualizar_
 ```json
 {
-    "quantity": 3
+    "book_name": "Nombre",
+    "book_category": "Categoria",
+    "transaction_type": "Venta/Arriendo",
+    "price": 300,
+    "status": "Disponible",
+    "popularity_score":1
 }
-```
 
 **Response:**
 ```json
@@ -239,12 +244,21 @@ _No requiere body_
 **Método:** PATCH
 
 **Body request:**   
-_No requiere body_
+_Campos opcionales, enviar solo lo que se desea actualizar_
+```json
+{
+    "user_id": 3,
+    "book_id": 5,
+    "start_date": "2025-09-20T12:34:56Z",
+    "return_date": "2025-09-27T12:34:56Z",
+    "status": "Finalizado"
+}
+```
 
 **Response:**
 ```json
 {
-    "message": "estado del prestamo actualizado con exito"
+    "message": "prestamo actualizado con exito"
 }
 ```
 
@@ -319,11 +333,12 @@ _No requiere body_
 **Método:** PATCH
 
 **Body request:**   
+_Campos opcionales, enviar solo lo que se desea actualizar_
 ```json
 {
-    "user_id": 3,
+    "user_id": 2,
     "book_id": 6,
-    "sale_date": "2025-09-18T12:34:56Z"
+    "sale_date": "2025-08-27T12:34:56Z"
 }
 ```
 
@@ -425,12 +440,16 @@ _Devuelve el stock del libro de id entregada_
 **Método:** PATCH
 
 **Body request:**   
-_No requiere body_
-
-**Response:**   
-_Descuenta en 1 el stock del libro de id entregada_
+_Campos opcionales, enviar solo lo que se desea actualizar_
 ```json
 {
-    "message": "inventario actualizado correctamente"
+    "available quantity": 3
+}
+```
+
+**Response:**
+```json
+{
+    "message": "inventario actualizada con exito"
 }
 ```

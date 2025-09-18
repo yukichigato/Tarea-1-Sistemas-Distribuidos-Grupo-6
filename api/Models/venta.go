@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 )
@@ -56,21 +58,20 @@ func GetSaleById(db *sql.DB, id int) (structs.Sale, error) {
 }
 
 // Actualizar venta
-func UpdateSale(db *sql.DB, id int, saleUpd structs.SaleUpdate) error {
-	response, err := db.Exec("UPDATE ventas SET user_id=?, book_id=?, sale_date=? WHERE id=?", saleUpd.UserId, saleUpd.BookId, saleUpd.SaleDate, id)
-	if err != nil {
-		return err
-	}
+func UpdateSale(db *sql.DB, id int, saleUpdates map[string]any) error {
+	sets := []string{}
+	args := []any{}
 
-	rowsAffected, err := response.RowsAffected()
-	if err != nil {
-		return err
+	for field, value := range saleUpdates {
+		sets = append(sets, fmt.Sprintf("%s=?", field))
+		args = append(args, value)
 	}
-	if rowsAffected == 0 {
-		return errors.New("no se encontro venta con esa id")
-	}
+	args = append(args, id)
 
-	return nil
+	query := fmt.Sprintf("UPDATE ventas SET %s WHERE id=?", strings.Join(sets, ", "))
+	_, err := db.Exec(query, args...)
+
+	return err
 }
 
 // Registrar venta

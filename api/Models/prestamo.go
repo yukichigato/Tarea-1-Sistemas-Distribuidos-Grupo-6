@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 )
@@ -60,22 +62,21 @@ func GetLoanById(db *sql.DB, id int) (structs.Loan, error) {
 	return loan, nil
 }
 
-// Actualizar (estado) préstamo
-func UpdateLoanStatus(db *sql.DB, id int) error {
-	response, err := db.Exec("UPDATE prestamos SET status=? WHERE id=?", "finalizado", id)
-	if err != nil {
-		return err
-	}
+// Actualizar préstamo
+func UpdateLoan(db *sql.DB, id int, loanUpdates map[string]any) error {
+	sets := []string{}
+	args := []any{}
 
-	rowsAffected, err := response.RowsAffected()
-	if err != nil {
-		return err
+	for field, value := range loanUpdates {
+		sets = append(sets, fmt.Sprintf("%s=?", field))
+		args = append(args, value)
 	}
-	if rowsAffected == 0 {
-		return errors.New("no se encontro prestamo con esa id")
-	}
+	args = append(args, id)
 
-	return nil
+	query := fmt.Sprintf("UPDATE prestamos SET %s WHERE id=?", strings.Join(sets, ", "))
+	_, err := db.Exec(query, args...)
+
+	return err
 }
 
 // Insertar préstamo

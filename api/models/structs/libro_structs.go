@@ -17,7 +17,3 @@ type BookInput struct {
 	Price           int    `json:"price"`
 	Status          string `json:"status"`
 }
-
-type BookUpdate struct {
-	Quantity int `json:"quantity"`
-}

@@ -55,47 +55,31 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 	}
 }
 
-// Handler para actualizar saldo de usm pesos
-func BalanceHandler(db *sql.DB) gin.HandlerFunc {
+// Handler para actualizar usuario
+func UpdateUserHandler(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, ok := utils.ParseID(c)
 		if !ok {
 			return
 		}
 
-		var input structs.UserBalanceUpdate
+		var input map[string]any
 		if !utils.BindJSON(c, &input) {
 			return
 		}
+		delete(input, "id")
 
-		delta := 0
-		// Calcular total de la compra/prestamo (si aplica)
-		if len(input.BookList) > 0 {
-			for _, bookId := range input.BookList {
-				book, err := models.GetBookById(db, bookId)
-				if err != nil {
-					c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-					return
-				}
-				delta += book.Price
-			}
+		if len(input) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No hay campos para actualizar"})
+			return
+
 		}
 
-		// Abono
-		if input.Deposit != nil {
-			delta -= *input.Deposit
-		}
-
-		// Penalización
-		if input.LateFee != nil && *input.LateFee == 1 {
-			delta += 5
-		}
-
-		if err := models.UpdateUserBalance(db, id, delta); err != nil {
+		if err := models.UpdateUser(db, id, input); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "saldo actualizado con exito"})
+		c.JSON(http.StatusOK, gin.H{"message": "usuario actualizado con exito"})
 	}
 }
 

@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 )
@@ -22,8 +24,18 @@ func GetInventoryById(db *sql.DB, id int) (structs.Inventory, error) {
 }
 
 // Actualizar inventario de un libro
-func UpdateInventory(db *sql.DB, id int) error {
-	_, err := db.Exec(
-		"UPDATE inventario SET available quantity = available quantity - 1 WHERE id=?", id)
+func UpdateInventory(db *sql.DB, id int, inventoryUpdate map[string]any) error {
+	sets := []string{}
+	args := []any{}
+
+	for field, value := range inventoryUpdate {
+		sets = append(sets, fmt.Sprintf("%s=?", field))
+		args = append(args, value)
+	}
+	args = append(args, id)
+
+	query := fmt.Sprintf("UPDATE inventario SET %s WHERE id=?", strings.Join(sets, ", "))
+	_, err := db.Exec(query, args...)
+
 	return err
 }

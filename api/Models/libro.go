@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models/structs"
 )
@@ -76,10 +78,19 @@ func GetBookById(db *sql.DB, id int) (structs.Book, error) {
 }
 
 // Actualizar libro (prestamo/compra)
-func UpdateBook(db *sql.DB, id int, bookUpd structs.BookUpdate) error {
-	_, err := db.Exec(
-		"UPDATE libros SET popularity_score = popularity_score + ? WHERE id=?", bookUpd.Quantity, id,
-	)
+func UpdateBook(db *sql.DB, id int, bookUpdates map[string]any) error {
+	sets := []string{}
+	args := []any{}
+
+	for field, value := range bookUpdates {
+		sets = append(sets, fmt.Sprintf("%s=?", field))
+		args = append(args, value)
+	}
+	args = append(args, id)
+
+	query := fmt.Sprintf("UPDATE libros SET %s WHERE id=?", strings.Join(sets, ", "))
+	_, err := db.Exec(query, args...)
+
 	return err
 }
 

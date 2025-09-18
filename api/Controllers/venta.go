@@ -64,8 +64,14 @@ func UpdateSaleHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		var input structs.SaleUpdate
+		var input map[string]any
 		if !utils.BindJSON(c, &input) {
+			return
+		}
+		delete(input, "id")
+
+		if len(input) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No hay campos válidos para actualizar"})
 			return
 		}
 
@@ -73,7 +79,8 @@ func UpdateSaleHandler(db *sql.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "venta actualizada con exito"})
+		c.JSON(http.StatusOK, gin.H{"message": "prestamo actualizado con exito"})
+
 	}
 }
 

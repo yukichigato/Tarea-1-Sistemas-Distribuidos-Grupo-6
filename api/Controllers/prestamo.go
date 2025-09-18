@@ -65,11 +65,23 @@ func UpdateLoanHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		if err := models.UpdateLoanStatus(db, id); err != nil {
+		var input map[string]any
+		if !utils.BindJSON(c, &input) {
+			return
+		}
+		delete(input, "id")
+
+		if len(input) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No hay campos válidos para actualizar"})
+			return
+		}
+
+		if err := models.UpdateLoan(db, id, input); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "estado del prestamo actualizado con exito"})
+		c.JSON(http.StatusOK, gin.H{"message": "prestamo actualizado con exito"})
+
 	}
 }
 

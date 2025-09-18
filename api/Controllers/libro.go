@@ -48,13 +48,19 @@ func UpdateBookHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		var input structs.BookUpdate
+		var input map[string]any
 		if !utils.BindJSON(c, &input) {
+			return
+		}
+		delete(input, "id")
+
+		if len(input) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "No hay campos válidos para actualizar"})
 			return
 		}
 
 		if err := models.UpdateBook(db, id, input); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "no se pudo actualizar el libro"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"message": "libro actualizado con exito"})
