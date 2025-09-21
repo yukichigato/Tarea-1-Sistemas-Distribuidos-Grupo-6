@@ -39,3 +39,12 @@ type Sale struct {
 	Book_ID           int    `json:"book_id"`
 	Sale_date         string `json:"sale_date"`
 }
+
+type Transaction struct {
+	ID								int    `json:"id"`
+	Book_ID           int    `json:"book_id"`
+	Title						 	string `json:"book_name"`
+	Type 							string `json:"transaction_type"`
+	Transaction_date 	string `json:"transaction_date"`
+	Price             int    `json:"price"`
+}

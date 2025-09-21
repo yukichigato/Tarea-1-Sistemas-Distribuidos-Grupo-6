@@ -11,6 +11,22 @@ const (
 	SERVER_ADDRESS = "http://localhost:8080"
 )
 
+// CalculateTotal calculates the total price for a list of book IDs.
+// It fetches each book's price and sums them up, ignoring any books that can't be retrieved.
+func CalculateTotal(ids []int) int {
+	if len(ids) == 0 {
+		return 0
+	}
+	total := 0
+	for _, id := range ids {
+		book, err := GetBookByID(id)
+		if err == nil {
+			total += book.Price
+		}
+	}
+	return total
+}
+
 // RegisterUser sends a POST request to register a new user on the server.
 // It marshals the user data to JSON and sends it to the /user endpoint.
 // Returns true if registration is successful (HTTP 201), false otherwise.
@@ -47,7 +63,9 @@ func LoginUser(email, password string) (*User, error) {
 	return &user, nil
 }
 
-func GetCatalog() ([]Book, error) {
+// GetBooks retrieves all books from the server.
+// Returns a slice of Book structs and an error if the request fails.
+func GetBooks() ([]Book, error) {
 	response, err := http.Get(SERVER_ADDRESS + "/books")
 	if err != nil {
 		return nil, err
@@ -62,6 +80,8 @@ func GetCatalog() ([]Book, error) {
 	return books, nil
 }
 
+// GetBookByID retrieves a specific book by its ID from the server.
+// Returns the Book struct and an error if the book is not found or request fails.
 func GetBookByID(id int) (Book, error) {
 	response, err := http.Get(SERVER_ADDRESS + "/books/" + strconv.Itoa(id))
 	if err != nil {
@@ -75,4 +95,65 @@ func GetBookByID(id int) (Book, error) {
 	}
 	
 	return book, nil
+}
+
+// GetUserLoans retrieves all loans for a specific user from the server.
+// Returns a slice of Loan structs and an error if the request fails.
+func GetUserLoans(userID int) ([]Loan, error) {
+	response, err := http.Get(SERVER_ADDRESS + "/loans?user_id=" + strconv.Itoa(userID))
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	var loans []Loan
+	if err := json.NewDecoder(response.Body).Decode(&loans); err != nil {
+		return nil, err
+	}
+	
+	return loans, nil
+}
+
+// GetUserTransactions retrieves all transactions for a specific user from the server.
+// Returns a slice of Transaction structs and an error if the request fails.
+func GetUserTransactions(userID int) ([]Transaction, error) {
+	response, err := http.Get(SERVER_ADDRESS + "/transactions?user_id=" + strconv.Itoa(userID))
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	var transactions []Transaction
+	if err := json.NewDecoder(response.Body).Decode(&transactions); err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}
+
+func UpdateUserPesos(userID int, newPesos int) error {
+	payload := map[string]int{"usm_pesos": newPesos}
+	jsonPayload, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, SERVER_ADDRESS+"/user/"+strconv.Itoa(userID), bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return err
+	}
+
+	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -53,7 +54,7 @@ func viewMainMenu(user *utils.User) {
 		fmt.Scanln(&option)
 		switch option {
 		case 1:
-			catalog, err := utils.GetCatalog()
+			catalog, err := utils.GetBooks()
 			if err != nil {
 				fmt.Println("Error al obtener el catálogo:", err)
 				continue
@@ -64,13 +65,118 @@ func viewMainMenu(user *utils.User) {
 			}
 			fmt.Println(utils.CATALOGO_TABLE_FOOTER)
 		case 2:
-			// TODO : Carros de compras
+			scanner := bufio.NewScanner(os.Stdin)
+			var cart []int
+
+			for {
+				fmt.Print("Ingrese el ID del libro a agregar al carro: ")
+				if !scanner.Scan() {
+					break
+				}
+				text := strings.TrimSpace(scanner.Text())
+				if text == "" {
+					break
+				}
+				id, err := strconv.Atoi(text)
+				if err != nil {
+					fmt.Println("ID inválido, intentalo otra vez.")
+					continue
+				}
+				cart = append(cart, id)
+			}
+
+			total := utils.CalculateTotal(cart)
+			fmt.Printf("Su carro es de %d libros para un total de %d usm pesos.\n", len(cart), total)
+
+			fmt.Println(utils.CARRO_COMPRA_TABLE_HEADER)
+			for _, id := range cart {
+				book, err := utils.GetBookByID(id)
+				if err != nil {
+					fmt.Println("Error al obtener el libro:", err)
+					continue
+				}
+				fmt.Printf("| %-20s | %-17s | %-11d | %-20s |\n", book.Title, book.Transaction_type, book.Price, "-")
+			}
+			fmt.Println(utils.CARRO_COMPRA_TABLE_FOOTER)
+
+			fmt.Print("Confirmar pedido: ")
+			text := strings.TrimSpace(scanner.Text())
+			if (text == "") {
+				fmt.Println("Pedido realizado con éxito.")
+				return
+			}
+			fmt.Println("Pedido cancelado.")
 		case 3:
-			// TODO : Mis prestamos
+			loans, err := utils.GetUserLoans(user.ID)
+			if err != nil {
+				fmt.Println("Error al obtener los préstamos:", err)
+				continue
+			}
+			fmt.Println(utils.PRESTAMOS_TABLE_HEADER)
+			for _, loan := range loans {
+				fmt.Printf("| %-12d | %-20s | %-15s | %-13s | %-15s | %-9s |\n", loan.ID, "N/A", loan.Start_date, loan.Return_date, "N/A", loan.Status)
+			}
+			fmt.Println(utils.PRESTAMOS_TABLE_FOOTER)
 		case 4:
-			// TODO : Mi cuenta
+			fmt.Print(utils.MENU_MI_CUENTA_TEXT)
+			var subOption int
+			fmt.Print("Seleccione una opción: ")
+			fmt.Scanln(&subOption)
+			switch subOption {
+			case 1:
+				fmt.Println("Su saldo actual es de:", user.USM_Pesos, "usm pesos.")
+			case 2:
+				var amount int
+				fmt.Print("Ingrese la cantidad de usm pesos a abonar: ")
+				fmt.Scanln(&amount)
+				if amount > 0 {
+					err := utils.UpdateUserPesos(user.ID, user.USM_Pesos + amount)
+					if err != nil {
+						fmt.Println("Error al actualizar el saldo:", err)
+						continue
+					}
+					user.USM_Pesos += amount
+					fmt.Println("Nuevo saldo es de", user.USM_Pesos, "usm pesos.")
+				} else {
+					fmt.Println("Cantidad inválida. El abono debe ser mayor a 0.")
+				}
+			case 3:
+				transactions , err := utils.GetUserTransactions(user.ID)
+				if err != nil {
+					fmt.Println("Error al obtener el historial de transacciones:", err)
+					continue
+				}
+
+				fmt.Print(utils.HISTORIAL_COMPRAS_ARRIENDOS_TABLE_HEADER)
+				for _, transaction := range transactions {
+					fmt.Printf("| %-14d | %-9d | %-20s | %-11s | %-20s | %-9d |\n", transaction.ID, transaction.Book_ID, transaction.Title, transaction.Type, transaction.Transaction_date, transaction.Price)
+				}
+				fmt.Print(utils.HISTORIAL_COMPRAS_ARRIENDOS_TABLE_FOOTER)
+			case 4:
+				return
+			default:
+				return
+			}
 		case 5:
-			// TODO : Populares
+			books, err := utils.GetBooks()
+			if err != nil {
+				fmt.Println("Error al obtener los libros:", err)
+				continue
+			}
+			
+			sort.Slice(books, func(i, j int) bool {
+				return books[i].Popularity > books[j].Popularity
+			})
+			
+			if len(books) > 5 {
+				books = books[:5]
+			}
+			
+			fmt.Println(utils.POPULARES_TABLE_HEADER)
+			for _, book := range books {
+				fmt.Printf("| %-8d | %-20s | %-12s | %-11d |\n", book.ID, book.Title, book.Category, book.Popularity)
+			}
+			fmt.Println(utils.POPULARES_TABLE_FOOTER)
 		case 6:
 			fmt.Println("Cerrando sesión...")
 			return
@@ -79,54 +185,6 @@ func viewMainMenu(user *utils.User) {
 			continue
 		}
 	}
-}
-
-func viewShoppingCart(user *utils.User) {
-	var cartItemIDs []int
-
-	scanner := bufio.NewScanner(os.Stdin)
-
-	for {
-		fmt.Print("Ingrese el ID del libro a agregar al carro: ")
-
-		if !scanner.Scan() {
-			break
-		}
-		input := strings.TrimSpace(scanner.Text())
-
-		if input == "" {
-			fmt.Println("Exiting...")
-			break
-		}
-
-		num, err := strconv.Atoi(input)
-		if err != nil {
-			fmt.Println("ID inválida, intentalo otra vez.")
-			continue
-		}
-
-		if num >= 0 {
-			cartItemIDs = append(cartItemIDs, num)
-		} else if num < 0 {
-			fmt.Println("ID inválida, intentalo otra vez.")
-		}
-	}
-
-	var books []utils.Book
-	for _, id := range cartItemIDs {
-		book, err := utils.GetBookByID(id)
-		if err != nil {
-			fmt.Println("Error al obtener el libro:", err)
-			continue
-		}
-		books = append(books, book)
-	}
-
-	fmt.Println(utils.CARRO_COMPRA_TABLE_HEADER)
-	for _, book := range books {
-		fmt.Printf("| %-20s | %-17s | %-11d | %-20s |\n", book.Title, book.Transaction_type, book.Price, "N/A")
-	}
-	fmt.Println(utils.CARRO_COMPRA_TABLE_FOOTER)
 }
 
 // handleRegister handles user registration by collecting user information
