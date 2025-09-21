@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	SERVER_ADDRESS = "http://localhost:8080"
+	SERVER_ADDRESS = "http://10.10.30.252:8080"
 )
 
 // CalculateTotal calculates the total price for a list of book IDs.
