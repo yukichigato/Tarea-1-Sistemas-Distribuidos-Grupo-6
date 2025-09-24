@@ -416,7 +416,11 @@ _No requiere body_
 **Response:**
 ```json
 {
-    "message": "login exitoso"
+    "id": 1,
+    "first_name": "Cristobal",
+    "last_name": "Alvarez",
+    "email": "correo@email.com",
+    "usm_pesos": 53
 }
 ```
 

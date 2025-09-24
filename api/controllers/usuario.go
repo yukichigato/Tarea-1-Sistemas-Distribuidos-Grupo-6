@@ -47,7 +47,14 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 
 		for _, u := range users {
 			if u.Email == input.Email && u.Password == input.Password {
-				c.JSON(http.StatusOK, gin.H{"message": "login exitoso"})
+				response := structs.UserResponse{
+					Id:        u.Id,
+					FirstName: u.FirstName,
+					LastName:  u.LastName,
+					Email:     u.Email,
+					UsmPesos:  u.UsmPesos,
+				}
+				c.JSON(http.StatusOK, response)
 				return
 			}
 		}
