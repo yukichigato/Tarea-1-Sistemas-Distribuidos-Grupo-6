@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -13,9 +12,9 @@ func main() {
 	cfg := config.LoadConfig()
 
 	// Conectar db
-	db, err := sql.Open("sqlite3", "biblioteca.db") // -> Ajustar al archivo .db real <-
+	db, err := bd.InitDB(cfg.DBDriver, cfg.DBName)
 	if err != nil {
-		log.Fatalf("No se pudo conectar a la Base de Datos: %v", err)
+		log.Fatalf("No se pudo inicializar la DB: %v", err)
 	}
 	defer db.Close()
 
@@ -29,6 +28,9 @@ func main() {
 
 	// Iniciar aplicación
 	address := ":" + cfg.Port
+	if address == ":" {
+		address = ":8080"
+	}
 	log.Printf("API escuchando en %s\n", address)
 	if err := router.Run(address); err != nil {
 		log.Fatalf("No se pudo iniciar el servidor: %v", err)

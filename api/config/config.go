@@ -23,13 +23,16 @@ func LoadConfig() Config {
 		log.Println(".env no encontrado, usando variables de entorno del sistema")
 	}
 
+	dbName := os.Getenv("DB_NAME")
+	dbDriver := "sqlite3"
+	if dbName == "" {
+		dbName = "mi_base.db"
+	}
+
 	return Config{
-		Port:       os.Getenv("PORT"),
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     os.Getenv("DB_PORT"),
-		DBUser:     os.Getenv("DB_USER"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_NAME"),
-		ClientURL:  os.Getenv("CLIENT_URL"),
+		Port:      os.Getenv("PORT"),
+		DBDriver:  dbDriver,
+		DBName:    dbName,
+		ClientURL: os.Getenv("CLIENT_URL"),
 	}
 }
