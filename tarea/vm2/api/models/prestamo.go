@@ -11,7 +11,7 @@ import (
 
 // Listar préstamos
 func ListLoans(db *sql.DB) ([]structs.Loan, error) {
-	rows, err := db.Query("SELECT id, user_id, book_id, start_date, return_date, status FROM prestamos")
+	rows, err := db.Query("SELECT id, user_id, book_id, start_date, return_date, status FROM loans")
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func ListLoans(db *sql.DB) ([]structs.Loan, error) {
 // Obtener préstamo específico por id
 func GetLoanById(db *sql.DB, id int) (structs.Loan, error) {
 	var loan structs.Loan
-	err := db.QueryRow("SELECT id, user_id, book_id, start_date, return_date, status FROM prestamos WHERE id=?", id).Scan(
+	err := db.QueryRow("SELECT id, user_id, book_id, start_date, return_date, status FROM loans WHERE id=?", id).Scan(
 		&loan.Id,
 		&loan.UserId,
 		&loan.BookId,
@@ -73,7 +73,7 @@ func UpdateLoan(db *sql.DB, id int, loanUpdates map[string]any) error {
 	}
 	args = append(args, id)
 
-	query := fmt.Sprintf("UPDATE prestamos SET %s WHERE id=?", strings.Join(sets, ", "))
+	query := fmt.Sprintf("UPDATE loans SET %s WHERE id=?", strings.Join(sets, ", "))
 	_, err := db.Exec(query, args...)
 
 	return err
@@ -82,7 +82,7 @@ func UpdateLoan(db *sql.DB, id int, loanUpdates map[string]any) error {
 // Insertar préstamo
 func InsertLoan(db *sql.DB, loan structs.LoanInput) error {
 	_, err := db.Exec(
-		"INSERT INTO prestamos (user_id, book_id, start_date, return_date, status) VALUES (?, ?, DATE('now'), DATE('now', '+7 days'), ?)",
+		"INSERT INTO loans (user_id, book_id, start_date, return_date, status) VALUES (?, ?, DATE('now'), DATE('now', '+7 days'), ?)",
 		loan.UserId, loan.BookId, "pendiente",
 	)
 	return err
@@ -90,7 +90,7 @@ func InsertLoan(db *sql.DB, loan structs.LoanInput) error {
 
 // Listar préstamos de un usuario por user_id
 func GetUserLoans(db *sql.DB, userId int) ([]structs.Loan, error) {
-	rows, err := db.Query("SELECT id, user_id, book_id, start_date, return_date, status FROM prestamos WHERE user_id=?", userId)
+	rows, err := db.Query("SELECT id, user_id, book_id, start_date, return_date, status FROM loans WHERE user_id=?", userId)
 	if err != nil {
 		return nil, err
 	}

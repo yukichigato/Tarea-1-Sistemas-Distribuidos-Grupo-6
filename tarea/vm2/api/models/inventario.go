@@ -12,7 +12,7 @@ import (
 // Obtener inventario de libro específico
 func GetInventoryById(db *sql.DB, id int) (structs.Inventory, error) {
 	var inventory structs.Inventory
-	err := db.QueryRow("SELECT available_quantity FROM inventario WHERE id=?", id).Scan(&inventory.AvailableQuantity)
+	err := db.QueryRow("SELECT available_quantity FROM inventory WHERE id=?", id).Scan(&inventory.AvailableQuantity)
 
 	if err == sql.ErrNoRows {
 		return inventory, errors.New("registro no encontrado")
@@ -34,7 +34,7 @@ func UpdateInventory(db *sql.DB, id int, inventoryUpdate map[string]any) error {
 	}
 	args = append(args, id)
 
-	query := fmt.Sprintf("UPDATE inventario SET %s WHERE id=?", strings.Join(sets, ", "))
+	query := fmt.Sprintf("UPDATE inventory SET %s WHERE id=?", strings.Join(sets, ", "))
 	_, err := db.Exec(query, args...)
 
 	return err

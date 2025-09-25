@@ -72,7 +72,7 @@ func GetBookById(db *sql.DB, id int) (structs.Book, error) {
 	)
 
 	if err == sql.ErrNoRows {
-		return book, errors.New("Libro no encontrado")
+		return book, errors.New("libro no encontrado")
 	} else if err != nil {
 		return book, err
 	}
@@ -105,7 +105,7 @@ func InsertBook(db *sql.DB, book structs.BookInput) error {
 		return err
 	}
 	if exists > 0 {
-		return errors.New("Libro no existe en catalogo")
+		return errors.New("libro no existe en catalogo")
 	}
 
 	_, err = db.Exec(

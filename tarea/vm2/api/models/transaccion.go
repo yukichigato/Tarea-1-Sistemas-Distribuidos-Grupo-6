@@ -16,8 +16,8 @@ func ListTransactions(db *sql.DB) ([]structs.Transaction, error) {
 			'Arriendo' AS transaction_type,
 			p.start_date AS transaction_date,
 			l.price AS book_price
-		FROM prestamos p
-		JOIN libros l ON p.book_id = l.id
+		FROM loans p
+		JOIN books l ON p.book_id = l.id
 
 		UNION ALL
 
@@ -28,8 +28,8 @@ func ListTransactions(db *sql.DB) ([]structs.Transaction, error) {
 			'Compra' AS transaction_type,
 			v.sale_date AS transaction_date,
 			l.price AS book_price
-		FROM ventas v
-		JOIN libros l ON v.book_id = l.id
+		FROM sales v
+		JOIN books l ON v.book_id = l.id
 		ORDER BY transaction_date DESC;
 	`
 	rows, err := db.Query(query)

@@ -11,7 +11,7 @@ import (
 
 // Listar ventas
 func ListSales(db *sql.DB) ([]structs.Sale, error) {
-	rows, err := db.Query("SELECT id, user_id, book_id, sale_date FROM ventas")
+	rows, err := db.Query("SELECT id, user_id, book_id, sale_date FROM sales")
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func ListSales(db *sql.DB) ([]structs.Sale, error) {
 // Obtener venta específica por id
 func GetSaleById(db *sql.DB, id int) (structs.Sale, error) {
 	var sale structs.Sale
-	err := db.QueryRow("SELECT id, user_id, book_id, sale_date FROM ventas WHERE id=?", id).Scan(
+	err := db.QueryRow("SELECT id, user_id, book_id, sale_date FROM sales WHERE id=?", id).Scan(
 		&sale.Id,
 		&sale.UserId,
 		&sale.BookId,
@@ -68,7 +68,7 @@ func UpdateSale(db *sql.DB, id int, saleUpdates map[string]any) error {
 	}
 	args = append(args, id)
 
-	query := fmt.Sprintf("UPDATE ventas SET %s WHERE id=?", strings.Join(sets, ", "))
+	query := fmt.Sprintf("UPDATE sales SET %s WHERE id=?", strings.Join(sets, ", "))
 	_, err := db.Exec(query, args...)
 
 	return err
@@ -77,7 +77,7 @@ func UpdateSale(db *sql.DB, id int, saleUpdates map[string]any) error {
 // Registrar venta
 func InsertSale(db *sql.DB, sale structs.SaleInput) error {
 	_, err := db.Exec(
-		"INSERT INTO ventas (user_id, book_id, sale_date) VALUES (?, ?, Date('now'))",
+		"INSERT INTO sales (user_id, book_id, sale_date) VALUES (?, ?, Date('now'))",
 		sale.UserId, sale.BookId,
 	)
 	return err
@@ -85,7 +85,7 @@ func InsertSale(db *sql.DB, sale structs.SaleInput) error {
 
 // Listar compras de un usuario por user_id
 func GetUserSales(db *sql.DB, userId int) ([]structs.Sale, error) {
-	rows, err := db.Query("SELECT id, user_id, book_id, sale_date FROM ventas WHERE user_id=?", userId)
+	rows, err := db.Query("SELECT id, user_id, book_id, sale_date FROM sales WHERE user_id=?", userId)
 	if err != nil {
 		return nil, err
 	}

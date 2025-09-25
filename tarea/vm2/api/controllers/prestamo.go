@@ -35,7 +35,7 @@ func ListLoansHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"loans": loans})
+		c.JSON(http.StatusOK, loans)
 	}
 }
 
