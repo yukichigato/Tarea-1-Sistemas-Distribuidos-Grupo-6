@@ -36,7 +36,7 @@ func RegisterUser(user User) bool {
 		return false
 	}
 
-	client, err := http.Post(SERVER_ADDRESS + "/user", "application/json", bytes.NewBuffer(payload))
+	client, err := http.Post(SERVER_ADDRESS+"/user", "application/json", bytes.NewBuffer(payload))
 	if err != nil {
 		return false
 	}
@@ -59,7 +59,7 @@ func LoginUser(email, password string) (*User, error) {
 	if err := json.NewDecoder(response.Body).Decode(&user); err != nil {
 		return nil, err
 	}
-	
+
 	return &user, nil
 }
 
@@ -76,7 +76,7 @@ func GetBooks() ([]Book, error) {
 	if err := json.NewDecoder(response.Body).Decode(&books); err != nil {
 		return nil, err
 	}
-	
+
 	return books, nil
 }
 
@@ -93,7 +93,7 @@ func GetBookByID(id int) (Book, error) {
 	if err := json.NewDecoder(response.Body).Decode(&book); err != nil {
 		return Book{}, err
 	}
-	
+
 	return book, nil
 }
 
@@ -110,7 +110,7 @@ func GetUserLoans(userID int) ([]Loan, error) {
 	if err := json.NewDecoder(response.Body).Decode(&loans); err != nil {
 		return nil, err
 	}
-	
+
 	return loans, nil
 }
 
@@ -138,7 +138,7 @@ func UpdateUserPesos(userID int, newPesos int) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPut, SERVER_ADDRESS+"/user/"+strconv.Itoa(userID), bytes.NewBuffer(jsonPayload))
+	req, err := http.NewRequest(http.MethodPut, SERVER_ADDRESS+"/users/"+strconv.Itoa(userID), bytes.NewBuffer(jsonPayload))
 	if err != nil {
 		return err
 	}

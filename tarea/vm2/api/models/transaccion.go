@@ -12,7 +12,7 @@ func ListTransactions(db *sql.DB) ([]structs.Transaction, error) {
 		SELECT
 			p.id AS transaction_id,
 			l.id AS book_id,
-			l.name AS book_name,
+			l.book_name AS book_name,
 			'Arriendo' AS transaction_type,
 			p.start_date AS transaction_date,
 			l.price AS book_price
@@ -24,7 +24,7 @@ func ListTransactions(db *sql.DB) ([]structs.Transaction, error) {
 		SELECT
 			v.id AS transaction_id,
 			l.id AS book_id,
-			l.name AS book_name,
+			l.book_name AS book_name,
 			'Compra' AS transaction_type,
 			v.sale_date AS transaction_date,
 			l.price AS book_price
