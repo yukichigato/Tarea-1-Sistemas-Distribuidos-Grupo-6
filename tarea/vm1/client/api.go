@@ -9,8 +9,9 @@ import (
 )
 
 // BACKEND_URL defines the base URL for all API calls
-//const BACKEND_URL = "http://10.10.30.252:8080"
+// const BACKEND_URL = "http://10.10.30.252:8080"
 const BACKEND_URL = "http://localhost:8080"
+
 // CreateSale creates a new sale record via HTTP POST request to the sales endpoint
 func CreateSale(userID int, bookID int) error {
 	sale := Sale{
@@ -99,7 +100,6 @@ func FetchUser(email, password string) (User, error) {
 	return user, nil
 }
 
-
 // CreateUser creates a new user account via HTTP POST request to the users endpoint
 func CreateUser(newUser User) error {
 	userJson, err := json.Marshal(newUser)
@@ -136,18 +136,6 @@ func FetchBooks() ([]Book, error) {
 
 	return books, nil
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // FetchBook retrieves a specific book by ID via HTTP GET request
 func FetchBook(id int) (Book, error) {
@@ -272,7 +260,7 @@ func UpdateUserUSMPesos(id int, newUSM_Pesos int) error {
 		panic(err)
 	}
 
-	req, err := http.NewRequest(http.MethodPatch, BACKEND_URL+"/user/"+strconv.Itoa(id), bytes.NewBuffer(payloadJson))
+	req, err := http.NewRequest(http.MethodPatch, BACKEND_URL+"/users/"+strconv.Itoa(id), bytes.NewBuffer(payloadJson))
 	if err != nil {
 		panic(err)
 	}
