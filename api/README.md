@@ -175,7 +175,7 @@ _Campos opcionales, enviar solo lo que se desea actualizar_
     "book_category": "Categoria",
     "transaction_type": "Venta/Arriendo",
     "price": 4,
-    "status": "Disponible",
+    "status": "Disponible"
 }
 ```
 
