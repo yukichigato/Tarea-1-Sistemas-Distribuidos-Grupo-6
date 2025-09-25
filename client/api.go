@@ -9,7 +9,7 @@ import (
 )
 
 // BACKEND_URL defines the base URL for all API calls
-const BACKEND_URL = "http://localhost:8080"
+const BACKEND_URL = "http://10.10.30.252:8080"
 
 // CreateSale creates a new sale record via HTTP POST request to the sales endpoint
 func CreateSale(userID int, bookID int) error {
