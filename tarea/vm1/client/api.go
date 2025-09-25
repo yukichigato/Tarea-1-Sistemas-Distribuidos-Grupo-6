@@ -60,22 +60,45 @@ func CreateLoan(userID int, bookID int) error {
 	return nil
 }
 
-// FetchUser retrieves user information by email and password via HTTP GET request
-func FetchUser(email string, password string) (User, error) {
-	res, err := http.Get(BACKEND_URL + "/users?email=" + email + "&password=" + password)
+// FetchUser logs in and retrieves user information
+func FetchUser(email, password string) (User, error) {
+	loginPayload := map[string]string{
+		"email":    email,
+		"password": password,
+	}
+
+	jsonPayload, err := json.Marshal(loginPayload)
 	if err != nil {
-		panic(err)
+		return User{}, err
+	}
+
+	res, err := http.Post(BACKEND_URL+"/login", "application/json", bytes.NewBuffer(jsonPayload))
+	if err != nil {
+		return User{}, err
 	}
 	defer res.Body.Close()
 
-	var user User
-	err = json.NewDecoder(res.Body).Decode(&user)
+	var loginResp struct {
+		ID int `json:"id"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&loginResp); err != nil {
+		return User{}, err
+	}
+
+	userRes, err := http.Get(BACKEND_URL + "/user/" + strconv.Itoa(loginResp.ID))
 	if err != nil {
-		panic(err)
+		return User{}, err
+	}
+	defer userRes.Body.Close()
+
+	var user User
+	if err := json.NewDecoder(userRes.Body).Decode(&user); err != nil {
+		return User{}, err
 	}
 
 	return user, nil
 }
+
 
 // CreateUser creates a new user account via HTTP POST request to the users endpoint
 func CreateUser(newUser User) error {
