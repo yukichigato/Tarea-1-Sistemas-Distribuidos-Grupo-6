@@ -1,14 +1,10 @@
 package structs
 
-import (
-	"time"
-)
-
 type Sale struct {
-	Id       int       `json:"id"`
-	UserId   int       `json:"user_id"`
-	BookId   int       `json:"book_id"`
-	SaleDate time.Time `json:"sale_date"`
+	Id       int    `json:"id"`
+	UserId   int    `json:"user_id"`
+	BookId   int    `json:"book_id"`
+	SaleDate string `json:"sale_date"`
 }
 
 type SaleInput struct {
