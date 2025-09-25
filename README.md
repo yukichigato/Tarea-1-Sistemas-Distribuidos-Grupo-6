@@ -10,6 +10,8 @@
 
 ### Justificaciones de endpoints extra
 - La creación del endpoint `POST /login` fue preferido en lugar de utilizar `GET /users?email=xxxx&password=xxxx` por razones de diseño de APIs REST, semánticas de HTTP, seguridad, no utilizar malas prácticas y por razones prácticas.
+- La creación del endpoint `GET /inventory/id` y `PATCH /inventory/id` fueron preferidas para un manejo más cómodo del inventario y no tener que hacer maniobras extras para la actualización de este.
+
 
 ## Uso del cliente
 
