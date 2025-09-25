@@ -447,7 +447,7 @@ _Devuelve el stock del libro de id entregada_
 _Campos opcionales, enviar solo lo que se desea actualizar_
 ```json
 {
-    "available quantity": 3
+    "available_quantity": 3
 }
 ```
 
