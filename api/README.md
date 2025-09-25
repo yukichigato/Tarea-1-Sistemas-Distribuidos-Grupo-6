@@ -269,7 +269,7 @@ _Campos opcionales, enviar solo lo que se desea actualizar_
 ```json
 {
     "user_id": 1,
-    "book_id": 2,
+    "book_id": 2
 }
 ```
 
@@ -356,7 +356,7 @@ _Campos opcionales, enviar solo lo que se desea actualizar_
 ```json
 {
     "user_id": 1,
-    "book_id": 2,
+    "book_id": 2
 }
 ```
 
@@ -409,7 +409,7 @@ _No requiere body_
 ```json
 {
     "email": "correo@email.com",
-    "password": "contraseña",
+    "password": "contraseña"
 }
 ```
 
