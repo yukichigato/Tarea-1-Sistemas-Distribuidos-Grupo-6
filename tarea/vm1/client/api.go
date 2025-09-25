@@ -60,7 +60,6 @@ func CreateLoan(userID int, bookID int) error {
 
 	return nil
 }
-
 // FetchUser logs in and retrieves user information
 func FetchUser(email, password string) (User, error) {
 	loginPayload := map[string]string{
@@ -78,27 +77,17 @@ func FetchUser(email, password string) (User, error) {
 		return User{}, err
 	}
 	defer res.Body.Close()
-
-	var loginResp struct {
-		ID int `json:"id"`
-	}
-	if err := json.NewDecoder(res.Body).Decode(&loginResp); err != nil {
-		return User{}, err
-	}
-
-	userRes, err := http.Get(BACKEND_URL + "/user/" + strconv.Itoa(loginResp.ID))
-	if err != nil {
-		return User{}, err
-	}
-	defer userRes.Body.Close()
-
+	
 	var user User
-	if err := json.NewDecoder(userRes.Body).Decode(&user); err != nil {
+	if err := json.NewDecoder(res.Body).Decode(&user); err != nil {
 		return User{}, err
 	}
+
+	user.Password = ""
 
 	return user, nil
 }
+
 
 // CreateUser creates a new user account via HTTP POST request to the users endpoint
 func CreateUser(newUser User) error {
