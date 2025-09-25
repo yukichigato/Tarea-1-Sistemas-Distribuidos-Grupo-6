@@ -1,1 +1,0 @@
-# Tarea-1-Sistemas-Distribuidos-Grupo-6
