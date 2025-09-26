@@ -12,7 +12,15 @@
 - La creación del endpoint `POST /login` fue preferido en lugar de utilizar `GET /users?email=xxxx&password=xxxx` por razones de diseño de APIs REST, semánticas de HTTP, seguridad, no utilizar malas prácticas y por razones prácticas.
 - La creación del endpoint `GET /inventory/id` y `PATCH /inventory/id` fueron preferidas para un manejo más cómodo del inventario y no tener que hacer maniobras extras para la actualización de este.
 
-
+### Ejecucion 
+-vm2: 
+- Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api/db/poblar$
+- go run poblar.go (revisar que no exista mi_base.db en la carpeta)
+-cd Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api
+-go run main.go (revisar que este disponible el puerto :8080)
+- vm1:
+- Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm1/client
+- go run . 
 ## Uso del cliente
 
 Entrar a la carpeta del cliente, en `Desktop` y ejecutar el siguiente comando para levantar el cliente y utilizarlo.
