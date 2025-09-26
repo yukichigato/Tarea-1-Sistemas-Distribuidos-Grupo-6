@@ -24,15 +24,17 @@
 - go run main.go (revisar que este disponible el puerto :8080)
 - vm1:
 - Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm1/client
-- go run . 
+- go run .
+
 ## Uso del cliente
 
-Entrar a la carpeta del cliente, en `Desktop` y ejecutar el siguiente comando para levantar el cliente y utilizarlo.
+Entrar a la carpeta del cliente (/tarea/vm1/client), en `Desktop` y ejecutar el siguiente comando para levantar el cliente y utilizarlo.
 ```sh
 go run .
 ```
 
 ## Uso de la API
+
 Entrar a la carpeta de la api (/tarea/vm2/api) y ejecutar el siguiente comando para levantar el servidor:
 ```sh
 go run main.go
