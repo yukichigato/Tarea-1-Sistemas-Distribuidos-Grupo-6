@@ -4,6 +4,10 @@
 - Sebastian Lopez | 202173020-6
 - Baltazar Portilla 202173112-1
 
+### Definición de VMs
+- VM1: 10.10.30.251 (cliente)
+- VM2: 10.10.30.252 (api y db)
+
 ### Explicaciones sobre el uso de la IA en el proyecto
 - IA fue utilizada para reorganizar el cliente desde un solo archivo `main.go` a varios por razones de mantenibilidad.
 - IA fue utilizado para la creación de comentarios genéricos en las funciones que solo se encargan de hacer requests a la API.
@@ -29,6 +33,10 @@ go run .
 ```
 
 ## Uso de la API
+Entrar a la carpeta de la api (/tarea/vm2/api) y ejecutar el siguiente comando para levantar el servidor:
+```sh
+go run main.go
+```
 
 ### Endpoint `/users`
 **Método:** GET
