@@ -13,7 +13,7 @@
 - La creación del endpoint `GET /inventory/id` y `PATCH /inventory/id` fueron preferidas para un manejo más cómodo del inventario y no tener que hacer maniobras extras para la actualización de este.
 
 ### Ejecucion 
--vm2: 
+- vm2: 
 - Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api/db/poblar$
 - go run poblar.go (revisar que no exista mi_base.db en la carpeta)
 -cd Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api
