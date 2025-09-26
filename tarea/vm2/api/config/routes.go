@@ -4,7 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/gin-gonic/gin"
-	controllers "github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/controllers"
+	controllers "github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api/controllers"
 )
 
 func SetupRoutes(router *gin.Engine, db *sql.DB) {
