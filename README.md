@@ -16,8 +16,8 @@
 - vm2: 
 - Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api/db/poblar$
 - go run poblar.go (revisar que no exista mi_base.db en la carpeta)
--cd Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api
--go run main.go (revisar que este disponible el puerto :8080)
+- cd Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api
+- go run main.go (revisar que este disponible el puerto :8080)
 - vm1:
 - Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm1/client
 - go run . 
