@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	config "github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/Config"
+	config "github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api/Config"
 )
 
 func main() {
