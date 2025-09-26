@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/api/models"
+	"github.com/yukichigato/Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api/models"
 )
 
 // Handler para listar transacciones
