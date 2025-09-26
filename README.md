@@ -25,15 +25,17 @@
 
 ## Uso del cliente
 
-Entrar a la carpeta del cliente (/tarea/vm1/client), en `Desktop` y ejecutar el siguiente comando para levantar el cliente y utilizarlo.
+Entrar a la carpeta del cliente y ejecutar el comando correspondiente para levantar el cliente y utilizarlo.
 ```sh
+cd Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm1/client
 go run .
 ```
 
 ## Uso de la API
 
-Entrar a la carpeta de la api (/tarea/vm2/api) y ejecutar el siguiente comando para levantar el servidor:
+Entrar a la carpeta de la API y ejecutar el comando correspondiente para levantar el servidor:
 ```sh
+cd Tarea-1-Sistemas-Distribuidos-Grupo-6/tarea/vm2/api
 go run main.go
 ```
 
